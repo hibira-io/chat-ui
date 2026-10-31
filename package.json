@@ -1,0 +1,90 @@
+{
+  "name": "@hibira-io/chat-ui",
+  "version": "0.1.0",
+  "description": "Agentic chat UI for support and AI agents over Hibira realtime channels: Markdown messages, agent steps, typed replies, follow-up suggestions and human handoff, for React",
+  "keywords": [
+    "chat",
+    "chat-ui",
+    "ai",
+    "agent",
+    "ai-chat",
+    "assistant",
+    "human-handoff",
+    "human-in-the-loop",
+    "live-chat",
+    "support",
+    "markdown",
+    "react",
+    "pusher",
+    "realtime",
+    "hibira"
+  ],
+  "homepage": "https://hibira.io",
+  "bugs": {
+    "url": "https://github.com/hibira-io/chat-ui/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hibira-io/chat-ui.git"
+  },
+  "license": "MIT",
+  "author": "Hibira (https://hibira.io)",
+  "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./react": {
+      "types": "./react.d.ts",
+      "default": "./react.js"
+    },
+    "./server": {
+      "types": "./server.d.ts",
+      "default": "./server.js"
+    },
+    "./styles.css": "./styles.css",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "markdown.js",
+    "conversation.js",
+    "locales.js",
+    "types.d.ts",
+    "react.js",
+    "react.d.ts",
+    "server.js",
+    "server.d.ts",
+    "styles.css",
+    "PROTOCOL.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "typecheck": "tsc -p test/tsconfig.json"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^7.0.2"
+  }
+}
