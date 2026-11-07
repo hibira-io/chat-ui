@@ -1,5 +1,6 @@
 import type { ReactElement, ReactNode } from 'react';
 import type { AgentStep, ChatLabels, ChatMessage, Conversation, ConversationState, LabelOverrides } from './types.js';
+import type { ChatClient, ChatConversationOptions } from './hibira.js';
 
 export type * from './types.js';
 export { createConversation } from './index.js';
@@ -29,6 +30,7 @@ export interface ChatThreadProps {
 export function ChatThread(props: ChatThreadProps): ReactElement;
 export function Chat(props: Omit<ChatThreadProps, 'messages' | 'typing' | 'step' | 'onSend'> & { conversation: Conversation | null }): ReactElement;
 export function useConversation(conversation: Conversation | null): ConversationState;
+export function useChatConversation(client: ChatClient | null, id: string | null, options?: ChatConversationOptions): Conversation | null;
 export function Markdown(props: { text: string; locale?: string; labels?: LabelOverrides; origin?: string; imageOrigins?: string[] }): ReactElement;
 export function AgentSteps(props: { typing: boolean; step?: AgentStep; locale?: string; labels?: ChatLabels }): ReactElement | null;
 export function Suggestions(props: { items: string[]; onPick: (text: string) => void; disabled?: boolean; locale?: string; labels?: ChatLabels }): ReactElement | null;

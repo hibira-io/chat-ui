@@ -78,6 +78,34 @@ conversation.start();
 
 `parseMarkdown(text, { origin, imageOrigins })` returns a plain block tree you can render with anything.
 
+## Hibira Chat API
+
+With the [Hibira Chat API](https://hibira.io) Hibira stores the messages, so
+you write no `load` or `send` routes. Your server creates conversations and
+gives each signed-in user a **user token** (an HS256 JWT signed with the app
+secret, `{ sub, exp }`); the page talks to Hibira directly.
+
+```jsx
+import Pusher from 'pusher-js';
+import { createChatClient } from '@hibira-io/chat-ui/hibira';
+import { Chat, useChatConversation } from '@hibira-io/chat-ui/react';
+
+const client = createChatClient({ appId: 'your-app-id', tokenUrl: '/hibira/token' });
+const pusher = new Pusher('your-key', { wsHost: 'ws.hibira.io', userAuthentication: { endpoint: '/pusher/user-auth' } });
+pusher.signin(); // Chat API events arrive on the user's own channel
+
+function Trip({ userId }) {
+  const conversation = useChatConversation(client, 'trip-1', { pusher, me: userId });
+  return <Chat conversation={conversation} me={userId} locale="zh-TW" />;
+}
+```
+
+The client does the rest of the API as the token's user: `conversations()`
+(with `unread`), `messages()`, `search(id, q)`, `send(id, { text, attachments })`,
+`edit()`, `remove()`, `react(id, seq, emoji, on)`, `read()`, `typing()`,
+`report()` and `upload(id, file)` (presigned, up to 25 MB). Edits, deletes and
+reactions from other members update the thread live through `pusher.user`.
+
 ## Server (Node)
 
 ```js

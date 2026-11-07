@@ -1,10 +1,11 @@
 {
   "name": "@hibira-io/chat-ui",
-  "version": "0.1.0",
-  "description": "Agentic chat UI for support and AI agents over Hibira realtime channels: Markdown messages, agent steps, typed replies, follow-up suggestions and human handoff, for React",
+  "version": "0.2.0",
+  "description": "Agentic chat UI for support and AI agents over Hibira realtime channels: Markdown messages, agent steps, typed replies, follow-up suggestions and human handoff, and a client for the Hibira Chat API, for React",
   "keywords": [
     "chat",
     "chat-ui",
+    "chat-api",
     "ai",
     "agent",
     "ai-chat",
@@ -41,6 +42,10 @@
       "types": "./react.d.ts",
       "default": "./react.js"
     },
+    "./hibira": {
+      "types": "./hibira.d.ts",
+      "default": "./hibira.js"
+    },
     "./server": {
       "types": "./server.d.ts",
       "default": "./server.js"
@@ -58,6 +63,8 @@
     "conversation.js",
     "locales.js",
     "types.d.ts",
+    "hibira.js",
+    "hibira.d.ts",
     "react.js",
     "react.d.ts",
     "server.js",

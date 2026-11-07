@@ -20,3 +20,14 @@ t.step('writing');
 t.stop();
 const meta = agentMetadata({ suggestions: ['Is there a free plan?'] });
 export { blocks, label, meta };
+
+import { createChatClient, chatConversation, type ChatApiMessage } from '@hibira-io/chat-ui/hibira';
+import { useChatConversation } from '@hibira-io/chat-ui/react';
+const chat = createChatClient({ appId: 'app', tokenUrl: '/hibira/token' });
+chat.send('trip', { text: 'hi' }).then((r) => {
+  const m: ChatApiMessage = r.message;
+  return chat.react('trip', m.seq, '👍');
+});
+const cc = chatConversation(chat, 'trip', { me: 'ann' });
+createElement(Chat, { conversation: cc, me: 'ann' });
+export const useIt = () => useChatConversation(chat, 'trip', { me: 'ann' });
