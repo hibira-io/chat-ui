@@ -3,10 +3,11 @@
 // buttons and a reply box. Import '@hibira-io/chat-ui/styles.css' for the
 // default look.
 
-import { createElement as h, Fragment, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { createElement as h, Fragment, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { parseMarkdown } from './markdown.js';
 import { isAutomatic, STEPS } from './conversation.js';
 import { format, labelsFor } from './locales.js';
+import { chatConversation } from './hibira.js';
 
 export { createConversation } from './conversation.js';
 
@@ -376,4 +377,10 @@ const noop = () => () => {};
 export function Chat({ conversation, ...props }) {
   const state = useConversation(conversation);
   return h(ChatThread, { messages: state.messages, typing: state.typing, step: state.step, onSend: conversation ? (t) => conversation.send(t) : undefined, ...props });
+}
+
+/** A Hibira Chat API conversation (createChatClient) for <Chat>, made once per client, id and pusher. */
+export function useChatConversation(client, id, options = {}) {
+  const { pusher, me } = options;
+  return useMemo(() => (client && id ? chatConversation(client, id, options) : null), [client, id, pusher, me]); // eslint-disable-line react-hooks/exhaustive-deps
 }
