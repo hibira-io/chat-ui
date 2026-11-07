@@ -46,7 +46,8 @@ export function createChatClient(options = {}) {
   if (!options.appId) throw new TypeError('createChatClient: appId is required');
   if (!options.token && !options.tokenUrl) throw new TypeError('createChatClient: token or tokenUrl is required');
   const doFetch = options.fetch ?? ((...a) => globalThis.fetch(...a));
-  const host = (options.host ?? DEFAULT_HOST).replace(/\/+$/, '');
+  let host = String(options.host ?? DEFAULT_HOST);
+  while (host.endsWith('/')) host = host.slice(0, -1);
   const base = `${/^https?:\/\//.test(host) ? host : `https://${host}`}/apps/${encodeURIComponent(options.appId)}/chat/me`;
   let token = typeof options.token === 'string' ? options.token : null;
   let pending = null;
