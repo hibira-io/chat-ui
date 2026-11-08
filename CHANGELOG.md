@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0
+
+- The thread shows more of what the Chat API stores: system messages
+  (`kind: "system"`) as a centered line, withdrawn messages as "Message
+  removed", an "edited" mark, reactions, attachments as download links
+  (http and https only), and internal notes (`visible_to`) with their own
+  badge. System messages never count as the last reply for suggestions or
+  "Seen".
+- New labels `edited`, `removed` and `internalNote` in all seven languages.
+- `ChatMessage` types `kind`, `edited_at`, `deleted_at`, `reactions`,
+  `attachments` and `visible_to`.
+
 ## 0.2.0
 
 - `@hibira-io/chat-ui/hibira`: a client for the Hibira Chat API's user routes

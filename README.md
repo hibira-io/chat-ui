@@ -106,6 +106,17 @@ The client does the rest of the API as the token's user: `conversations()`
 `report()` and `upload(id, file)` (presigned, up to 25 MB). Edits, deletes and
 reactions from other members update the thread live through `pusher.user`.
 
+The thread shows what the Chat API stores: system messages (`kind: "system"`,
+such as "Bo joined") as a centered line, withdrawn messages as removed, an
+"edited" mark, reactions, attachments as download links, and internal notes
+(messages with `visible_to` roles) with their own badge. Members without that
+role never receive internal notes.
+
+For a visitor who is not a member yet, your server can ask the Chat API for a
+token limited to one conversation (`POST /apps/{appId}/chat/tokens` with
+`conversation_id` and `join: true`); `createChatClient` uses it like any other
+user token.
+
 ## Server (Node)
 
 ```js

@@ -9,6 +9,27 @@ export interface ChatMessage {
   text: string;
   created_at?: string;
   metadata?: AgentMetadata & Record<string, unknown>;
+  /** "system" for a note from the service or your server (shown centered, no sender); "text" otherwise. */
+  kind?: 'text' | 'system' | (string & {});
+  /** When the text was last edited. */
+  edited_at?: string;
+  /** When the message was withdrawn: it is shown as removed. */
+  deleted_at?: string;
+  /** Emoji to the users who reacted with it. */
+  reactions?: Record<string, string[]>;
+  /** Files sent with the message; `url` downloads one for a while. */
+  attachments?: ChatAttachment[];
+  /** Roles that may see it (an internal note); empty or missing: everyone. */
+  visible_to?: string[];
+}
+
+/** A file of a Chat API message. */
+export interface ChatAttachment {
+  id: string;
+  name: string;
+  content_type?: string;
+  size?: number;
+  url?: string;
 }
 
 /** Marks on an automatic reply. */
@@ -34,6 +55,12 @@ export interface ChatLabels {
   copied: string;
   copyCode: string;
   seen: string;
+  /** Shown next to the time of an edited message. */
+  edited: string;
+  /** Shown in place of a withdrawn message. */
+  removed: string;
+  /** The badge on a message only some roles see. */
+  internalNote: string;
   empty: string;
   /** {n}: the most characters in one message. */
   tooLong: string;
