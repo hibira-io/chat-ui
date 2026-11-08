@@ -22,6 +22,8 @@ const PATHS = {
   user: ['M20 21a8 8 0 0 0-16 0', 'M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],
   send: ['M22 2 11 13', 'M22 2l-7 20-4-9-9-4z'],
   image: ['M3 3h18v18H3z', 'M21 15l-5-5L5 21', 'M9 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2z'],
+  lock: ['M5 11h14v10H5z', 'M8 11V7a4 4 0 0 1 8 0v4'],
+  paperclip: ['m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48'],
 };
 
 function Icon({ name, size = 14, className }) {
@@ -232,24 +234,88 @@ function ago(iso, locale) {
   return fmt.format(Math.round(s / 86400), 'day');
 }
 
-function Bubble({ m, mine, animate, seen, labels, locale, origin, imageOrigins, renderName }) {
+/** A download link only for http(s) URLs. */
+function safeUrl(u) {
+  try {
+    const url = new URL(String(u));
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
+function fileSize(n, locale) {
+  if (typeof n !== 'number' || !(n >= 0)) return '';
+  const units = ['byte', 'kilobyte', 'megabyte', 'gigabyte'];
+  let i = 0;
+  let v = n;
+  while (v >= 1024 && i < units.length - 1) {
+    v /= 1024;
+    i++;
+  }
+  try {
+    return new Intl.NumberFormat(locale || 'en', { style: 'unit', unit: units[i], unitDisplay: 'short', maximumFractionDigits: i ? 1 : 0 }).format(v);
+  } catch {
+    return `${Math.round(v)} ${['B', 'KB', 'MB', 'GB'][i]}`;
+  }
+}
+
+function Attachments({ items, locale }) {
+  return h(
+    'ul',
+    { className: 'hb-chat-files' },
+    items.map((a, i) => {
+      const href = safeUrl(a.url);
+      const body = [h(Icon, { key: 'i', name: 'paperclip', size: 12 }), h('span', { key: 'n', className: 'hb-chat-file-name' }, a.name || 'file'), a.size != null && h('span', { key: 's', className: 'hb-chat-file-size' }, fileSize(a.size, locale))];
+      return h('li', { key: a.id ?? i }, href ? h('a', { href, target: '_blank', rel: 'noopener noreferrer', download: a.name || true }, body) : h('span', null, body));
+    }),
+  );
+}
+
+function Reactions({ reactions, me }) {
+  const list = Object.entries(reactions).filter(([, users]) => Array.isArray(users) && users.length);
+  if (!list.length) return null;
+  return h(
+    'ul',
+    { className: 'hb-chat-reactions' },
+    list.map(([emoji, users]) => h('li', { key: emoji, className: users.includes(me) ? 'is-mine' : undefined, title: users.join(', ') }, emoji, ' ', h('span', null, users.length))),
+  );
+}
+
+function Bubble({ m, mine, me, animate, seen, labels, locale, origin, imageOrigins, renderName }) {
   const auto = isAutomatic(m);
-  const { shown, done } = useReveal(m.text, animate && auto);
+  const removed = !!m.deleted_at;
+  const { shown, done } = useReveal(removed ? '' : m.text ?? '', animate && auto && !removed);
+  const note = Array.isArray(m.visible_to) && m.visible_to.length > 0;
+  const files = !removed && Array.isArray(m.attachments) ? m.attachments : [];
+  if (m.kind === 'system') {
+    return h('li', { className: 'hb-chat-system', 'data-kind': 'system' }, h('span', null, m.text), m.created_at && h('time', { dateTime: m.created_at, title: new Date(m.created_at).toLocaleString(locale) }, ago(m.created_at, locale)));
+  }
   return h(
     'li',
-    { className: 'hb-chat-msg ' + (mine ? 'is-mine' : 'is-theirs') + (auto ? ' is-agent' : ''), 'data-sender': m.sender },
-    h('div', { className: 'hb-chat-bubble' + (done ? '' : ' is-revealing') }, h('div', { className: 'hb-chat-md' }, blocks(parseMarkdown(shown, { origin, imageOrigins }), labels))),
+    { className: 'hb-chat-msg ' + (mine ? 'is-mine' : 'is-theirs') + (auto ? ' is-agent' : '') + (note ? ' is-note' : '') + (removed ? ' is-removed' : ''), 'data-sender': m.sender },
+    h(
+      'div',
+      { className: 'hb-chat-bubble' + (done ? '' : ' is-revealing') },
+      removed
+        ? h('p', { className: 'hb-chat-removed' }, labels.removed)
+        : shown && h('div', { className: 'hb-chat-md' }, blocks(parseMarkdown(shown, { origin, imageOrigins }), labels)),
+      files.length > 0 && h(Attachments, { items: files, locale }),
+    ),
+    !removed && m.reactions && h(Reactions, { reactions: m.reactions, me }),
     h(
       'div',
       { className: 'hb-chat-meta' },
       !mine && h('span', null, renderName ? renderName(m) : m.name),
+      note && h('span', { className: 'hb-chat-badge is-note' }, h(Icon, { name: 'lock', size: 12 }), labels.internalNote),
       auto &&
         (m.metadata?.handoff
           ? h('span', { className: 'hb-chat-badge is-handoff' }, h(Icon, { name: 'user', size: 12 }), labels.handoff)
           : h('span', { className: 'hb-chat-badge' }, h(Icon, { name: 'sparkles', size: 12 }), labels.automatic)),
       m.created_at && h('time', { dateTime: m.created_at, title: new Date(m.created_at).toLocaleString(locale) }, ago(m.created_at, locale)),
+      m.edited_at && !removed && h('span', { title: new Date(m.edited_at).toLocaleString(locale) }, labels.edited),
       seen && h('span', null, labels.seen),
-      auto && done && !m.metadata?.handoff && h(CopyButton, { text: m.text, labels }),
+      auto && done && !removed && !m.metadata?.handoff && h(CopyButton, { text: m.text, labels }),
     ),
   );
 }
@@ -286,8 +352,8 @@ export function ChatThread({
   useEffect(() => {
     end.current?.scrollIntoView?.({ block: 'nearest' });
   }, [last, typing]);
-  const lastMine = [...messages].reverse().find((m) => m.sender === me);
-  const lastMsg = messages[messages.length - 1];
+  const lastMine = [...messages].reverse().find((m) => m.sender === me && m.kind !== 'system');
+  const lastMsg = [...messages].reverse().find((m) => m.kind !== 'system');
   const suggestions = lastMsg && isAutomatic(lastMsg) && !typing ? lastMsg.metadata?.suggestions ?? [] : [];
   const tooLong = [...text.trim()].length > maxLength;
   const canSend = !!onSend && !disabled;
@@ -320,6 +386,7 @@ export function ChatThread({
           key: m.seq,
           m,
           mine: m.sender === me,
+          me,
           animate: firstSeq.current !== null && m.seq > firstSeq.current,
           seen: m === lastMine && readSeq !== undefined && readSeq >= m.seq,
           labels,

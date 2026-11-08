@@ -14,6 +14,9 @@ const en = {
   seen: 'Seen',
   empty: 'Ask us anything.',
   tooLong: 'Keep a message under {n} characters.',
+  edited: 'edited',
+  removed: 'Message removed',
+  internalNote: 'Internal note',
   steps: {
     reading: 'Reading your question',
     account: 'Looking at your account',
@@ -36,6 +39,9 @@ const zhTW = {
   seen: '已讀',
   empty: '有任何問題都可以問我們。',
   tooLong: '每則訊息請少於 {n} 個字元。',
+  edited: '已編輯',
+  removed: '訊息已刪除',
+  internalNote: '內部備註',
   steps: {
     reading: '正在閱讀你的問題',
     account: '正在查看你的帳戶',
@@ -58,6 +64,9 @@ const zhCN = {
   seen: '已读',
   empty: '有任何问题都可以问我们。',
   tooLong: '每条消息请少于 {n} 个字符。',
+  edited: '已编辑',
+  removed: '消息已删除',
+  internalNote: '内部备注',
   steps: {
     reading: '正在阅读你的问题',
     account: '正在查看你的账户',
@@ -80,6 +89,9 @@ const ja = {
   seen: '既読',
   empty: 'お気軽にご質問ください。',
   tooLong: 'メッセージは {n} 文字未満にしてください。',
+  edited: '編集済み',
+  removed: 'メッセージは削除されました',
+  internalNote: '社内メモ',
   steps: {
     reading: 'ご質問を確認しています',
     account: 'アカウントを確認しています',
@@ -102,6 +114,9 @@ const ko = {
   seen: '읽음',
   empty: '무엇이든 물어보세요.',
   tooLong: '메시지는 {n}자 미만으로 써 주세요.',
+  edited: '수정됨',
+  removed: '삭제된 메시지입니다',
+  internalNote: '내부 메모',
   steps: {
     reading: '질문을 읽고 있어요',
     account: '계정을 확인하고 있어요',
@@ -124,6 +139,9 @@ const th = {
   seen: 'อ่านแล้ว',
   empty: 'ถามเราได้ทุกเรื่อง',
   tooLong: 'โปรดเขียนข้อความไม่เกิน {n} ตัวอักษร',
+  edited: 'แก้ไขแล้ว',
+  removed: 'ข้อความถูกลบแล้ว',
+  internalNote: 'บันทึกภายใน',
   steps: {
     reading: 'กำลังอ่านคำถามของคุณ',
     account: 'กำลังดูบัญชีของคุณ',
@@ -146,6 +164,9 @@ const vi = {
   seen: 'Đã xem',
   empty: 'Hãy hỏi chúng tôi bất cứ điều gì.',
   tooLong: 'Tin nhắn cần ít hơn {n} ký tự.',
+  edited: 'đã sửa',
+  removed: 'Tin nhắn đã bị xóa',
+  internalNote: 'Ghi chú nội bộ',
   steps: {
     reading: 'Đang đọc câu hỏi của bạn',
     account: 'Đang xem tài khoản của bạn',

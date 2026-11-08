@@ -1,6 +1,6 @@
 {
   "name": "@hibira-io/chat-ui",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Agentic chat UI for support and AI agents over Hibira realtime channels: Markdown messages, agent steps, typed replies, follow-up suggestions and human handoff, and a client for the Hibira Chat API, for React",
   "keywords": [
     "chat",
