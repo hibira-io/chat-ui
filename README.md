@@ -112,6 +112,21 @@ such as "Bo joined") as a centered line, withdrawn messages as removed, an
 (messages with `visible_to` roles) with their own badge. Members without that
 role never receive internal notes.
 
+**Translation.** Set each user's language once and messages from members who
+write in another language arrive translated: pass the same `language` to the
+conversation and the thread shows the translation, with a "Show original"
+toggle on each translated message.
+
+```js
+await client.setLanguage('ja'); // the user's language, a BCP 47 tag
+const conversation = useChatConversation(client, 'trip-1', { pusher, me: userId, language: 'ja' });
+```
+
+`client.translate(id, seq, language)` translates one message on request, and
+`inLanguage(message, language)` gives a message as a reader of that language
+sees it (`text` is the translation, `original_text` the original). The
+translations come with the Chat add-ons; see the Chat API reference.
+
 For a visitor who is not a member yet, your server can ask the Chat API for a
 token limited to one conversation (`POST /apps/{appId}/chat/tokens` with
 `conversation_id` and `join: true`); `createChatClient` uses it like any other

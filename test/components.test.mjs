@@ -92,3 +92,11 @@ test('a system message is not the last reply for suggestions', () => {
   ];
   assert.match(render(h(ChatThread, { messages, onSend: async () => {} })), /hb-chat-chip/);
 });
+
+test('a translated message offers its original', () => {
+  const out = render(h(ChatThread, { locale: 'zh-TW', messages: [{ seq: 1, sender: 'bo', name: 'Bo', text: '七點見', original_text: 'See you at 7' }] }));
+  assert.match(out, /七點見/);
+  assert.doesNotMatch(out, /See you at 7/);
+  assert.match(out, /<button type="button" class="hb-chat-translated" aria-pressed="false">顯示原文<\/button>/);
+  assert.doesNotMatch(render(h(ChatThread, { messages: [{ seq: 1, sender: 'bo', text: 'hi' }] })), /hb-chat-translated/);
+});

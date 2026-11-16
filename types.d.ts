@@ -61,6 +61,9 @@ export interface ChatLabels {
   removed: string;
   /** The badge on a message only some roles see. */
   internalNote: string;
+  /** On a translated message: shows the original text / the translation again. */
+  showOriginal: string;
+  showTranslation: string;
   empty: string;
   /** {n}: the most characters in one message. */
   tooLong: string;

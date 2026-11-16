@@ -15,6 +15,8 @@ const en = {
   empty: 'Ask us anything.',
   tooLong: 'Keep a message under {n} characters.',
   edited: 'edited',
+  showOriginal: 'Show original',
+  showTranslation: 'Show translation',
   removed: 'Message removed',
   internalNote: 'Internal note',
   steps: {
@@ -40,6 +42,8 @@ const zhTW = {
   empty: '有任何問題都可以問我們。',
   tooLong: '每則訊息請少於 {n} 個字元。',
   edited: '已編輯',
+  showOriginal: '顯示原文',
+  showTranslation: '顯示翻譯',
   removed: '訊息已刪除',
   internalNote: '內部備註',
   steps: {
@@ -65,6 +69,8 @@ const zhCN = {
   empty: '有任何问题都可以问我们。',
   tooLong: '每条消息请少于 {n} 个字符。',
   edited: '已编辑',
+  showOriginal: '显示原文',
+  showTranslation: '显示翻译',
   removed: '消息已删除',
   internalNote: '内部备注',
   steps: {
@@ -90,6 +96,8 @@ const ja = {
   empty: 'お気軽にご質問ください。',
   tooLong: 'メッセージは {n} 文字未満にしてください。',
   edited: '編集済み',
+  showOriginal: '原文を表示',
+  showTranslation: '翻訳を表示',
   removed: 'メッセージは削除されました',
   internalNote: '社内メモ',
   steps: {
@@ -115,6 +123,8 @@ const ko = {
   empty: '무엇이든 물어보세요.',
   tooLong: '메시지는 {n}자 미만으로 써 주세요.',
   edited: '수정됨',
+  showOriginal: '원문 보기',
+  showTranslation: '번역 보기',
   removed: '삭제된 메시지입니다',
   internalNote: '내부 메모',
   steps: {
@@ -140,6 +150,8 @@ const th = {
   empty: 'ถามเราได้ทุกเรื่อง',
   tooLong: 'โปรดเขียนข้อความไม่เกิน {n} ตัวอักษร',
   edited: 'แก้ไขแล้ว',
+  showOriginal: 'ดูต้นฉบับ',
+  showTranslation: 'ดูคำแปล',
   removed: 'ข้อความถูกลบแล้ว',
   internalNote: 'บันทึกภายใน',
   steps: {
@@ -165,6 +177,8 @@ const vi = {
   empty: 'Hãy hỏi chúng tôi bất cứ điều gì.',
   tooLong: 'Tin nhắn cần ít hơn {n} ký tự.',
   edited: 'đã sửa',
+  showOriginal: 'Xem bản gốc',
+  showTranslation: 'Xem bản dịch',
   removed: 'Tin nhắn đã bị xóa',
   internalNote: 'Ghi chú nội bộ',
   steps: {

@@ -34,6 +34,12 @@ export interface ChatApiMessage extends ChatMessage {
   /** Each emoji and the members who reacted, in order. */
   reactions?: Record<string, string[]>;
   attachments?: Attachment[];
+  /** The language the text is written in (BCP 47), once it was translated. */
+  language?: string;
+  /** The text translated into each member's language, by language tag. */
+  translations?: Record<string, string>;
+  /** Set by inLanguage(): the original text when text is a translation. */
+  original_text?: string;
 }
 
 export interface ChatApiConversation {
@@ -80,6 +86,12 @@ export interface ChatClient {
   report(id: string, seq: number, reason?: string): Promise<Report>;
   read(id: string, seq: number): Promise<{ read_seq: number }>;
   typing(id: string, typing?: boolean): Promise<unknown>;
+  /** The user's settings. */
+  me(options?: Opts): Promise<{ user_id: string; language: string | null }>;
+  /** Sets the user's language (BCP 47, such as 'ja' or 'zh-TW'; null for none). */
+  setLanguage(language: string | null): Promise<{ user_id: string; language: string | null }>;
+  /** Translates one message into language and returns it with the translation. */
+  translate(id: string, seq: number, language: string): Promise<ChatApiMessage>;
   /** Uploads a File or Blob (up to 25 MB); send the result in a message's attachments. */
   upload(id: string, file: Blob & { name?: string }, options?: { name?: string }): Promise<Attachment>;
 }
@@ -91,6 +103,7 @@ export class ChatApiError extends Error {
 
 export function createChatClient(options: ChatClientOptions): ChatClient;
 export function tokenUser(token: string): string;
+export function inLanguage<M extends { text?: string; translations?: Record<string, string>; deleted_at?: string }>(message: M, language?: string): M & { original_text?: string };
 export function onChatEvents(pusher: unknown, handler: (event: string, data: any) => void): () => void;
 
 export interface ChatConversationOptions {
@@ -98,6 +111,8 @@ export interface ChatConversationOptions {
   pusher?: unknown;
   /** The user ID (default: the token's sub). */
   me?: string;
+  /** Show each message translated into this language when it has a translation. */
+  language?: string;
   pollMs?: number;
   livePollMs?: number;
   /** chat.read, chat.conversation, chat.left and chat.deleted for this conversation. */

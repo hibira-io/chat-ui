@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0
+
+- Translation (Hibira Chat API): `client.setLanguage(tag)` and `client.me()`
+  for the user's language, `client.translate(id, seq, language)` for one
+  message on request, and `inLanguage(message, language)`.
+  `chatConversation()` and `useChatConversation()` take `language`: the
+  thread then shows each message's translation into it, with a "Show
+  original" / "Show translation" toggle.
+- New labels `showOriginal` and `showTranslation` in all seven languages.
+- `ChatApiMessage` types `language`, `translations` and `original_text`.
+
 ## 0.3.0
 
 - The thread shows more of what the Chat API stores: system messages
