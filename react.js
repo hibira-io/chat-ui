@@ -285,7 +285,10 @@ function Reactions({ reactions, me }) {
 function Bubble({ m, mine, me, animate, seen, labels, locale, origin, imageOrigins, renderName }) {
   const auto = isAutomatic(m);
   const removed = !!m.deleted_at;
-  const { shown, done } = useReveal(removed ? '' : m.text ?? '', animate && auto && !removed);
+  const [original, setOriginal] = useState(false);
+  const translated = !removed && typeof m.original_text === 'string';
+  const body = translated && original ? m.original_text : m.text ?? '';
+  const { shown, done } = useReveal(removed ? '' : body, animate && auto && !removed);
   const note = Array.isArray(m.visible_to) && m.visible_to.length > 0;
   const files = !removed && Array.isArray(m.attachments) ? m.attachments : [];
   if (m.kind === 'system') {
@@ -314,6 +317,8 @@ function Bubble({ m, mine, me, animate, seen, labels, locale, origin, imageOrigi
           : h('span', { className: 'hb-chat-badge' }, h(Icon, { name: 'sparkles', size: 12 }), labels.automatic)),
       m.created_at && h('time', { dateTime: m.created_at, title: new Date(m.created_at).toLocaleString(locale) }, ago(m.created_at, locale)),
       m.edited_at && !removed && h('span', { title: new Date(m.edited_at).toLocaleString(locale) }, labels.edited),
+      translated &&
+        h('button', { type: 'button', className: 'hb-chat-translated', 'aria-pressed': original, onClick: () => setOriginal((v) => !v) }, original ? labels.showTranslation : labels.showOriginal),
       seen && h('span', null, labels.seen),
       auto && done && !removed && !m.metadata?.handoff && h(CopyButton, { text: m.text, labels }),
     ),
@@ -448,6 +453,6 @@ export function Chat({ conversation, ...props }) {
 
 /** A Hibira Chat API conversation (createChatClient) for <Chat>, made once per client, id and pusher. */
 export function useChatConversation(client, id, options = {}) {
-  const { pusher, me } = options;
-  return useMemo(() => (client && id ? chatConversation(client, id, options) : null), [client, id, pusher, me]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { pusher, me, language } = options;
+  return useMemo(() => (client && id ? chatConversation(client, id, options) : null), [client, id, pusher, me, language]); // eslint-disable-line react-hooks/exhaustive-deps
 }

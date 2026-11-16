@@ -108,6 +108,12 @@ export function createChatClient(options = {}) {
     report: (id, seq, reason) => call('POST', `${conv(id)}/messages/${seq}/reports`, { body: { reason } }).then((d) => d.report),
     read: (id, seq) => call('POST', `${conv(id)}/read`, { body: { seq } }),
     typing: (id, typing = true) => call('POST', `${conv(id)}/typing`, { body: { typing } }),
+    /** The user's settings: { user_id, language }. */
+    me: ({ signal } = {}) => call('GET', '/', { signal }),
+    /** Sets the user's language (a BCP 47 tag such as 'ja'; null for none): messages others send are then translated for them. */
+    setLanguage: (language) => call('PUT', '/', { body: { language: language || null } }),
+    /** Translates one message into language and returns it with the translation kept on it. */
+    translate: (id, seq, language) => call('POST', `${conv(id)}/messages/${seq}/translations`, { body: { language } }).then((d) => d.message),
     /** Uploads a File or Blob; send its result in a message's attachments. */
     async upload(id, file, { name } = {}) {
       const fileName = name ?? file?.name ?? 'file';
@@ -119,6 +125,18 @@ export function createChatClient(options = {}) {
       return attachment;
     },
   };
+}
+
+/**
+ * The message as a reader of language sees it: its translation into that
+ * language when it has one, with the original in original_text.
+ * @param {any} message
+ * @param {string} [language]
+ */
+export function inLanguage(message, language) {
+  const tr = language && message?.translations ? message.translations[language] : undefined;
+  if (typeof tr !== 'string' || !tr || message.deleted_at) return message;
+  return { ...message, text: tr, original_text: message.text };
 }
 
 /** Chat API events, sent to each member's user channel (pusher.signin). */
@@ -146,7 +164,8 @@ export function onChatEvents(pusher, handler) {
  * pusher.signin()); without it, it polls.
  * @param {ReturnType<typeof createChatClient>} client
  * @param {string} id
- * @param {{ pusher?: any, me?: string, pollMs?: number, livePollMs?: number, onEvent?: (event: string, data: any) => void }} [options]
+ * With language, messages show their translation into it (see inLanguage).
+ * @param {{ pusher?: any, me?: string, language?: string, pollMs?: number, livePollMs?: number, onEvent?: (event: string, data: any) => void }} [options]
  */
 export function chatConversation(client, id, options = {}) {
   const conversation = createConversation({
@@ -155,7 +174,10 @@ export function chatConversation(client, id, options = {}) {
     pollMs: options.pollMs,
     livePollMs: options.livePollMs,
     onEvent: options.onEvent,
-    load: (after, signal) => client.messages(id, after ? { after, signal } : { last: 50, signal }),
+    load: (after, signal) =>
+      client.messages(id, after ? { after, signal } : { last: 50, signal }).then((d) =>
+        options.language && Array.isArray(d?.messages) ? { ...d, messages: d.messages.map((m) => inLanguage(m, options.language)) } : d,
+      ),
     send: (text) => client.send(id, { text }),
   });
   const start = conversation.start;
@@ -167,7 +189,7 @@ export function chatConversation(client, id, options = {}) {
       if (data?.conversation_id !== id) return;
       const me = options.me ?? client.user();
       if (event === 'chat.message' || event === 'chat.message_updated') {
-        conversation.added(data.message);
+        conversation.added(inLanguage(data.message, options.language));
         if (event === 'chat.message') conversation.hint('message', { from: data.message?.sender, seq: data.message?.seq });
       } else if (event === 'chat.typing') {
         if (data.user_id !== me && data.typing !== false) conversation.hint('typing', { from: data.user_id });

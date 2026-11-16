@@ -51,6 +51,8 @@
 .hb-chat-msg.is-mine { align-self: flex-end; align-items: flex-end; }
 .hb-chat-bubble { padding: 8px 12px; border-radius: var(--hb-chat-radius); background: var(--hb-chat-surface); overflow-wrap: anywhere; min-width: 0; max-width: 100%; }
 .is-mine .hb-chat-bubble { background: var(--hb-chat-accent); color: var(--hb-chat-accent-ink); }
+.hb-chat-translated { padding: 0; border: 0; background: none; font: inherit; color: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.hb-chat-translated:hover, .hb-chat-translated:focus-visible { color: var(--hb-chat-fg, inherit); }
 .hb-chat-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 2px; font-size: 0.75rem; color: var(--hb-chat-muted); }
 .hb-chat-badge { display: inline-flex; align-items: center; gap: 3px; padding: 0 6px; border: 1px solid var(--hb-chat-border); border-radius: 999px; }
 .hb-chat-badge.is-handoff { border-style: dashed; }

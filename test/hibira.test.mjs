@@ -106,3 +106,23 @@ test('chatConversation loads, follows events for its conversation, and sends', a
   conv.stop();
   assert.equal(pusher.binds.size, 0);
 });
+
+test('languages and translations', async () => {
+  const { inLanguage } = await import('../hibira.js');
+  const f = fakeFetch({
+    'PUT /apps/a1/chat/me/': (call) => [200, { user_id: 'ann', language: call.body.language }],
+    'GET /apps/a1/chat/me/': [200, { user_id: 'ann', language: 'ja' }],
+    'POST /apps/a1/chat/me/conversations/trip/messages/3/translations': [200, { message: { seq: 3, text: 'hi', translations: { ja: 'やあ' } } }],
+  });
+  const c = createChatClient({ appId: 'a1', token: tok({ sub: 'ann' }), fetch: f });
+  assert.deepEqual(await c.setLanguage('ja'), { user_id: 'ann', language: 'ja' });
+  assert.deepEqual(f.calls[0].body, { language: 'ja' });
+  await c.setLanguage('');
+  assert.deepEqual(f.calls[1].body, { language: null });
+  assert.equal((await c.me()).language, 'ja');
+  const m = await c.translate('trip', 3, 'ja');
+  assert.deepEqual(f.calls[3].body, { language: 'ja' });
+  assert.deepEqual(inLanguage(m, 'ja'), { seq: 3, text: 'やあ', original_text: 'hi', translations: { ja: 'やあ' } });
+  assert.equal(inLanguage(m, 'ko'), m);
+  assert.equal(inLanguage({ ...m, deleted_at: 'x' }, 'ja').text, 'hi');
+});
